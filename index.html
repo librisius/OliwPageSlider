@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Page Slider</title>
+
+	<link rel="shortcut icon" href="favicon.ico">
+	
+	<link rel="stylesheet" href="style.css">
+
+	<script src="pageslider.js"></script>
+</head>
+<body>
+	<div id="wrap">
+		<div class="page"></div>
+		<div class="page"></div>
+		<div class="page"></div>
+		<div class="page"></div>
+		<div class="page"></div>
+	</div>
+	<div class="b-pogress">
+		<span>0%</span>
+		<span>25%</span>
+		<span>50%</span>
+		<span>75%</span>
+		<span>100%</span>
+	</div>
+	<nav>
+		<ul id="pageslider__nav">
+			<li>
+				<a href="#">1</a>
+			</li>
+			<li>
+				<a href="#">2</a>
+			</li>
+			<li>
+				<a href="#">3</a>
+			</li>
+			<li>
+				<a href="#">4</a>
+			</li>
+			<li>
+				<a href="#">5</a>
+			</li>
+		</ul>
+	</nav>
+
+	<script>
+		pageslider(document.getElementById('wrap'));
+	</script>
+</body>
+</html>
