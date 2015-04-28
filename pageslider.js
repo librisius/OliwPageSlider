@@ -5,7 +5,9 @@ function pageslider(item) {
 		$page = $this.children,
 		winH = window.innerHeight || document.documentElement.clientHeight,
 		winW = window.innerWidth || document.documentElement.clientWidth,
-		lastCall = 0,
+		now,
+		lastCallWhile = 0,
+		lastCallHandle = 0,
 		pageActive = 0,
 		pageCount = $page.length - 1,
 		pageLength = $this.children.length,
@@ -15,7 +17,7 @@ function pageslider(item) {
 		yAbs,
 
 		animationTime = 700,
-		delayTime = 1500,
+		delayTime = 700,
 		$navLi = document.getElementById('pageslider__nav').children,  // id of main nav > li
 		$textBlock = document.getElementById('pageslider__for-text'),
 		prevNav = true,
@@ -186,14 +188,19 @@ function pageslider(item) {
 	}
 	
 
-
 	function onWheel(event) {
+
+		now = Date.now();
 
 		event = event || window.event;
 
 		delta = event.deltaY || event.detail || event.wheelDelta;
 
-		handle(delta, delayTime);
+		if (now - lastCallWhile > 20) { // 20 is number from practic
+			handle(delta, delayTime);
+		}
+
+		lastCallWhile = now;
 	}
 
 
@@ -207,13 +214,9 @@ function pageslider(item) {
 
 	}
 
-
-
 	function handle(delta, delay, nav, i, noActivePage) {
 
-		var now = Date.now();
-
-		if (now - lastCall > delay) {
+		if (now - lastCallHandle > delay) {
 
 			if ( delta > 0 ) {
 
@@ -274,8 +277,9 @@ function pageslider(item) {
 
 			setTimeout(func, animationTime);
 
-			lastCall = now;
+			lastCallHandle = now;
 		}
+
 	}
 
 
