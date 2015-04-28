@@ -117,40 +117,62 @@ html, body {
 		}
 
 	.b-pogress {
+		width: 950px;
+
 		position: absolute;
 		top: 50%;
 		left: 50%;
 		z-index: 999;
 
+		margin-left: -475px;
+
 		color: #fff;
-		font: 700 100px/1 Arial;
+		font: 700 90px/1 Arial;
 
-		transform: translate(-50%, -50%);
+		text-align: center;
+
+		transform: translate(0, -50%);
 	}
 
-	.b-pogress span {
-		display: none;
+	.b-navkey {
+		width: 330px; /* 150*2 + 30 */
+
+		position: absolute;
+		top: 100px;
+		left: 50%;
+		z-index: 999;
+
+		margin-left: -165px; /* width/2 = 330/2 */
+
+		color: #777;
+		font: 700 30px/1 Arial;
 	}
 
-	[data-pageslider-progress = "0"] .b-pogress span:nth-child(1) {
-		display: block;
-	}
+		.b-navkey__key {
+			float: left;
 
-	[data-pageslider-progress = "25"] .b-pogress span:nth-child(2) {
-		display: block;
-	}
+			width: 150px;
 
-	[data-pageslider-progress = "50"] .b-pogress span:nth-child(3) {
-		display: block;
-	}
+			padding: 10px;
 
-	[data-pageslider-progress = "75"] .b-pogress span:nth-child(4) {
-		display: block;
-	}
+			background: white;
 
-	[data-pageslider-progress = "100"] .b-pogress span:nth-child(5) {
-		display: block;
-	}
+			text-align: center;
+
+			cursor: pointer;
+		}
+
+		.b-navkey__key:hover {
+			background: #f5f5f5;
+		}
+
+		.b-navkey__key:active {
+			background: #ebebeb;
+		}
+
+		.b-navkey__key + .b-navkey__key {
+			margin-left: 30px;
+		}
 
 	#pageslider__nav {
 		position: absolute;
