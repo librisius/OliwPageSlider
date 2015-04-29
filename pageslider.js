@@ -5,7 +5,8 @@ function pageslider(item) {
 		$page = $this.children,
 		winH = window.innerHeight || document.documentElement.clientHeight,
 		winW = window.innerWidth || document.documentElement.clientWidth,
-		now,
+		nowWheel,
+		nowHandle,
 		lastCallWhile = 0,
 		lastCallHandle = 0,
 		pageActive = 0,
@@ -72,6 +73,28 @@ function pageslider(item) {
 
 
 
+	document.addEventListener('touchend', function(event) {
+
+		touchNowPoint = event.changedTouches[0];
+
+		yAbs = Math.abs(touchStartPoint.y - touchNowPoint.pageY);
+
+		if (yAbs > 20) {
+
+			if (touchNowPoint.pageY < touchStartPoint.y) {
+				delta = 1;
+			}
+			else {
+				delta = -1;
+			}
+
+			handle(delta, 700, false);
+
+		}
+	}, false);
+
+
+
 	document.addEventListener('keydown', function(event) {
 
 		var keyCode = event.keyCode;
@@ -84,25 +107,32 @@ function pageslider(item) {
 	if (prevNav) {
 
 		$prev.addEventListener('click', function(event) {
-
-			if ( pageActive == 0 ) {
-
-				if ($navKeyloop) {
-
-					delta = 1;
-
-					handle(delta, animationTime, true, pageCount, pageActive);
-				}
-
-			} else {
-
-				delta = -1;
-				
-				handle(delta, animationTime);
-			}
-
+			fnPrevNav();
 		}, false);
 
+		$prev.addEventListener('touchend', function(event) {
+			fnPrevNav();
+		}, false);
+
+	}
+
+	function fnPrevNav() {
+
+		if ( pageActive == 0 ) {
+
+			if ($navKeyloop) {
+
+				delta = 1;
+
+				handle(delta, animationTime, true, pageCount, pageActive);
+			}
+
+		} else {
+
+			delta = -1;
+			
+			handle(delta, animationTime);
+		}
 	}
 
 
@@ -110,24 +140,32 @@ function pageslider(item) {
 	if (nextNav) {
 
 		$next.addEventListener('click', function(event) {
+			fnNextNav();
+		}, false);
 
-			if ( pageActive == pageCount ) {
+		$next.addEventListener('touchend', function(event) {
+			fnNextNav();
+		}, false);
 
-				if ($navKeyloop) {
+	}
 
-					delta = -1;
+	function fnNextNav() {
 
-					handle(delta, animationTime, true, 0, pageActive);
-				}
+		if ( pageActive == pageCount ) {
 
-			} else {
+			if ($navKeyloop) {
 
-				delta = 1;
-				
-				handle(delta, animationTime);
+				delta = -1;
+
+				handle(delta, animationTime, true, 0, pageActive);
 			}
 
-		}, false);
+		} else {
+
+			delta = 1;
+			
+			handle(delta, animationTime);
+		}
 
 	}
 
@@ -190,17 +228,19 @@ function pageslider(item) {
 
 	function onWheel(event) {
 
-		now = Date.now();
+		nowWheel = Date.now();
 
 		event = event || window.event;
 
 		delta = event.deltaY || event.detail || event.wheelDelta;
 
-		if (now - lastCallWhile > 20) { // 20 is number from practic
+		event.preventDefault ? event.preventDefault() : (event.returnValue = false);
+
+		if (nowWheel - lastCallWhile > 50) { // 20 is number from practic
 			handle(delta, delayTime);
 		}
 
-		lastCallWhile = now;
+		lastCallWhile = nowWheel;
 	}
 
 
@@ -216,7 +256,9 @@ function pageslider(item) {
 
 	function handle(delta, delay, nav, i, noActivePage) {
 
-		if (now - lastCallHandle > delay) {
+		nowHandle = Date.now();
+
+		if (nowHandle - lastCallHandle > delay) {
 
 			if ( delta > 0 ) {
 
@@ -277,7 +319,7 @@ function pageslider(item) {
 
 			setTimeout(func, animationTime);
 
-			lastCallHandle = now;
+			lastCallHandle = nowHandle;
 		}
 
 	}
