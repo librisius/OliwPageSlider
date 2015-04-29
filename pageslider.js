@@ -18,7 +18,7 @@ function pageslider(item) {
 		yAbs,
 
 		animationTime = 700,
-		delayTime = 700,
+		delayTime = animationTime,
 		$navLi = document.getElementById('pageslider__nav').children,  // id of main nav > li
 		$textBlock = document.getElementById('pageslider__for-text'),
 		prevNav = true,
@@ -40,7 +40,7 @@ function pageslider(item) {
 	}
 
 
-
+	// Wheel
 	if (window.addEventListener) {
 
 		if ('onwheel' in document) {
@@ -61,7 +61,7 @@ function pageslider(item) {
 	}
 
 
-
+	// Touch
 	document.addEventListener('touchstart', function(event) {
 
 		event.preventDefault();
@@ -88,13 +88,13 @@ function pageslider(item) {
 				delta = -1;
 			}
 
-			handle(delta, 700, false);
+			handle(delta, delayTime, false);
 
 		}
 	}, false);
 
 
-
+	//Keybord
 	document.addEventListener('keydown', function(event) {
 
 		var keyCode = event.keyCode;
@@ -116,6 +116,18 @@ function pageslider(item) {
 
 	}
 
+	if (nextNav) {
+
+		$next.addEventListener('click', function(event) {
+			fnNextNav();
+		}, false);
+
+		$next.addEventListener('touchend', function(event) {
+			fnNextNav();
+		}, false);
+
+	}
+
 	function fnPrevNav() {
 
 		if ( pageActive == 0 ) {
@@ -133,20 +145,6 @@ function pageslider(item) {
 			
 			handle(delta, animationTime);
 		}
-	}
-
-
-
-	if (nextNav) {
-
-		$next.addEventListener('click', function(event) {
-			fnNextNav();
-		}, false);
-
-		$next.addEventListener('touchend', function(event) {
-			fnNextNav();
-		}, false);
-
 	}
 
 	function fnNextNav() {
@@ -210,6 +208,8 @@ function pageslider(item) {
 	function keyNav(keyCode) {
 
 		if ( keyCode == 87 || keyCode == 38 ) {
+			// 87 - is arrow top
+			// 38 - is arrow bottom
 			delta = -1;
 
 			noActivePage = pageActive;
@@ -217,6 +217,8 @@ function pageslider(item) {
 			handle(delta, animationTime);
 
 		} else if ( keyCode == 83 || keyCode == 40 ) {
+			// 83 - is letter 'W'
+			// 38 - is letter 'S'
 			delta = 1;
 
 			noActivePage = pageActive;
@@ -236,7 +238,9 @@ function pageslider(item) {
 
 		event.preventDefault ? event.preventDefault() : (event.returnValue = false);
 
-		if (nowWheel - lastCallWhile > 50) { // 20 is number from practic
+		console.log(nowWheel - lastCallWhile);
+		
+		if (nowWheel - lastCallWhile > 100) { // 100 is number from practic
 			handle(delta, delayTime);
 		}
 
@@ -244,7 +248,7 @@ function pageslider(item) {
 	}
 
 
-
+	// delete all class active
 	function classClean() {
 
 		for (var i = pageCount; i >= 0; i--) {
