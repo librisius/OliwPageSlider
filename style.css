@@ -60,7 +60,7 @@ html, body {
 			visibility: visible;
 		}
 		
-		.pt-page-moveToTopEasing {
+		.pt-page-moveToTop {
 			animation: moveToTop .7s ease-in-out both;
 			-webkit-animation: moveToTop .7s ease-in-out both;
 		}
@@ -70,7 +70,7 @@ html, body {
 			-webkit-animation: moveFromBottom .6s ease both;
 		}
 
-		.pt-page-moveToBottomEasing {
+		.pt-page-moveToBottom {
 			animation: moveToBottom .7s ease-in-out both;
 			-webkit-animation: moveToBottom .7s ease-in-out both;
 		}

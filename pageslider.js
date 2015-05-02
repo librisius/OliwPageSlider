@@ -13,12 +13,14 @@ function pageslider(item) {
 		pageCount = $page.length - 1,
 		pageLength = $this.children.length,
 		delta,
+		deltaPrev = 0,
 		touchStartPoint = {},
 		touchNowPoint,
 		yAbs,
 
 		animationTime = 700,
 		delayTime = animationTime,
+		loop = true,
 		$navLi = document.getElementById('pageslider__nav').children,  // id of main nav > li
 		$textBlock = document.getElementById('pageslider__for-text'),
 		prevNav = true,
@@ -31,34 +33,9 @@ function pageslider(item) {
 
 
 	$page[pageActive].classList.add('active');
-	$body.setAttribute( 'data-pageslider-progress', Math.round(100 / (pageLength - 1) * pageActive) );
-	$body.setAttribute( 'data-pageslider-number', pageActive + 1 );
-	$navLi[pageActive].classList.add('active');
 
-	if (textArray) {
-		$textBlock.innerHTML = textArray[0];
-	}
+	sliderActive(pageActive);
 
-
-	// Wheel
-	if (window.addEventListener) {
-
-		if ('onwheel' in document) {
-			// IE9+, FF17+, Ch31+
-			window.addEventListener("wheel", onWheel);
-		} else if ('onmousewheel' in document) {
-			// old event variant
-			window.addEventListener("mousewheel", onWheel);
-		} else {
-			// Firefox < 17
-			window.addEventListener("MozMousePixelScroll", onWheel);
-		}
-
-	} else { // IE8-
-
-		window.attachEvent("onmousewheel", onWheel);
-
-	}
 
 
 	// Touch
@@ -94,6 +71,7 @@ function pageslider(item) {
 	}, false);
 
 
+
 	//Keybord
 	document.addEventListener('keydown', function(event) {
 
@@ -102,6 +80,17 @@ function pageslider(item) {
 		keyNav(keyCode);
 
 	}, false);
+
+
+
+	window.addEventListener('scrollDown', function() {
+        handle(-1, delayTime);
+    });
+
+	window.addEventListener('scrollUp', function() {
+        handle(1, delayTime);
+    });
+
 
 
 	if (prevNav) {
@@ -127,6 +116,37 @@ function pageslider(item) {
 		}, false);
 
 	}
+
+
+
+	for (var i = 0; i < $navLi.length; i++) {
+
+		$navLi[i].num = i;
+
+		$navLi[i].addEventListener('click', function(event) {
+			clickNav(this);
+		}, false);
+
+		$navLi[i].addEventListener('touchend', function(event) {
+			clickNav(this);
+		}, false);
+
+	};
+
+
+
+	function sliderActive(pageActive) {
+
+		$body.setAttribute( 'data-pageslider-progress', Math.round(100 / (pageLength - 1) * pageActive) );
+		$body.setAttribute( 'data-pageslider-number', pageActive + 1 );
+		$navLi[pageActive].classList.add('active');
+
+		if (textArray) {
+			$textBlock.innerHTML = textArray[pageActive];
+		}
+	}
+
+
 
 	function fnPrevNav() {
 
@@ -169,22 +189,6 @@ function pageslider(item) {
 
 
 
-	for (var i = 0; i < $navLi.length; i++) {
-
-		$navLi[i].num = i;
-
-		$navLi[i].addEventListener('click', function(event) {
-			clickNav(this);
-		}, false);
-
-		$navLi[i].addEventListener('touchend', function(event) {
-			clickNav(this);
-		}, false);
-
-	};
-
-
-
 	function clickNav(item) {
 
 		var i = item.num;
@@ -204,6 +208,8 @@ function pageslider(item) {
 			handle(delta, animationTime, true, i, noActivePage);
 		}
 	}
+
+
 
 	function keyNav(keyCode) {
 
@@ -226,26 +232,7 @@ function pageslider(item) {
 			handle(delta, animationTime);
 		}
 	}
-	
 
-	function onWheel(event) {
-
-		nowWheel = Date.now();
-
-		event = event || window.event;
-
-		delta = event.deltaY || event.detail || event.wheelDelta;
-
-		event.preventDefault ? event.preventDefault() : (event.returnValue = false);
-
-		console.log(nowWheel - lastCallWhile);
-		
-		if (nowWheel - lastCallWhile > 100) { // 100 is number from practic
-			handle(delta, delayTime);
-		}
-
-		lastCallWhile = nowWheel;
-	}
 
 
 	// delete all class active
@@ -257,6 +244,8 @@ function pageslider(item) {
 		};
 
 	}
+
+
 
 	function handle(delta, delay, nav, i, noActivePage) {
 
@@ -273,18 +262,25 @@ function pageslider(item) {
 					classClean();
 
 					$page[pageActive].classList.add('active', 'pt-page-moveFromBottom');
-					$page[noActivePage].classList.add('active', 'pt-page-moveToTopEasing', 'pt-page-ontop');
+					$page[noActivePage].classList.add('active', 'pt-page-moveToTop', 'pt-page-ontop');
 				
 				} else {
 
-					if( !( pageActive == pageCount ) ) {
+					if ( !( pageActive == pageCount ) ) {
 
 						classClean();
 
 						pageActive++;
 
 						$page[pageActive].classList.add('active', 'pt-page-moveFromBottom');
-						$page[pageActive].previousElementSibling.classList.add('active', 'pt-page-moveToTopEasing', 'pt-page-ontop');
+						$page[pageActive].previousElementSibling.classList.add('active', 'pt-page-moveToTop', 'pt-page-ontop');
+					} else if ( pageActive == pageCount && loop ) {
+						classClean();
+
+						pageActive = 0;
+
+						$page[pageActive].classList.add('active', 'pt-page-moveFromBottom');
+						$page[pageCount].classList.add('active', 'pt-page-moveToTop', 'pt-page-ontop');
 					}
 				}
 
@@ -297,29 +293,31 @@ function pageslider(item) {
 					classClean();
 
 					$page[pageActive].classList.add('active', 'pt-page-moveFromTop', 'pt-page-ontop');
-					$page[noActivePage].classList.add('active', 'pt-page-moveToBottomEasing');
+					$page[noActivePage].classList.add('active', 'pt-page-moveToBottom');
 				
 				} else {
 
-					if( !(pageActive == 0) ) {
+					if ( !(pageActive == 0) ) {
 
 						classClean();
 
 						pageActive--;
 
 						$page[pageActive].classList.add('active', 'pt-page-moveFromTop', 'pt-page-ontop');
-						$page[pageActive].nextElementSibling.classList.add('active', 'pt-page-moveToBottomEasing');
+						$page[pageActive].nextElementSibling.classList.add('active', 'pt-page-moveToBottom');
+					} else if ( pageActive == 0 && loop ) {
+
+						classClean();
+
+						pageActive = pageCount;
+
+						$page[pageActive].classList.add('active', 'pt-page-moveFromTop', 'pt-page-ontop');
+						$page[0].classList.add('active', 'pt-page-moveToBottom');
 					}
 				}
 			}
 
-			$body.setAttribute( 'data-pageslider-progress', Math.round(100 / (pageLength - 1) * pageActive) );
-			$body.setAttribute( 'data-pageslider-number', pageActive + 1 );
-			$navLi[pageActive].classList.add('active');
-
-			if (textArray) {
-				$textBlock.innerHTML = textArray[pageActive];
-			}
+			sliderActive(pageActive);
 
 			setTimeout(func, animationTime);
 
@@ -334,7 +332,7 @@ function pageslider(item) {
 	//add active class for new slider
 
 		for (var i = pageCount; i >= 0; i--) {
-			$page[i].classList.remove('active', 'pt-page-ontop', 'pt-page-moveFromBottom', 'pt-page-moveToTopEasing', 'pt-page-moveToBottomEasing', 'pt-page-moveFromTop');
+			$page[i].classList.remove('active', 'pt-page-ontop', 'pt-page-moveFromBottom', 'pt-page-moveToTop', 'pt-page-moveToBottom', 'pt-page-moveFromTop');
 		};
 
 		$page[pageActive].classList.add('active');
