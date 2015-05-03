@@ -84,11 +84,11 @@ function pageslider(item) {
 
 
 	window.addEventListener('scrollDown', function() {
-        handle(-1, delayTime);
+        handle(1, delayTime);
     });
 
 	window.addEventListener('scrollUp', function() {
-        handle(1, delayTime);
+        handle(-1, delayTime);
     });
 
 
