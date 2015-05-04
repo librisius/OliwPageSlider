@@ -27,8 +27,8 @@ function pageslider(item) {
 		$prev = document.getElementById('b-navkey__prev'),
 		nextNav = true,
 		$next = document.getElementById('b-navkey__next'),
-		$navKeyloop = true,
-		textArray = ['Ты можешь...', '... вставить текст ...', '... в зависимости ...', '... от слайда ...', 'Bye!'];
+		navKeyloop = true,
+		textArray = ['Ты можешь...', '... вставить текст ...', '... в зависимости ...', '... от слайда ...', 'Oliw Page Slider'];
 
 
 
@@ -152,7 +152,7 @@ function pageslider(item) {
 
 		if ( pageActive == 0 ) {
 
-			if ($navKeyloop) {
+			if (navKeyloop) {
 
 				delta = 1;
 
@@ -171,7 +171,7 @@ function pageslider(item) {
 
 		if ( pageActive == pageCount ) {
 
-			if ($navKeyloop) {
+			if (navKeyloop) {
 
 				delta = -1;
 

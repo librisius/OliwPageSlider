@@ -9,6 +9,15 @@ html, body {
 	height: 100%;
 }
 
+h1 {
+	padding-bottom: 240px;
+
+	color: #fff;
+	font: 700 80px Arial;
+
+	text-align: center;
+}
+
 	#wrap {
 		width: 100%;
 		height: 100%;
@@ -37,8 +46,16 @@ html, body {
 		}
 
 		.page:nth-child(1) {
+			display: table;
+
 			background: #7bb7fa;
 		}
+
+			.page:nth-child(1) > div {
+				display: table-cell;
+
+				vertical-align: middle;
+			}
 
 		.page:nth-child(2) {
 			background: #60d7a9;
@@ -61,8 +78,8 @@ html, body {
 		}
 		
 		.pt-page-moveToTop {
-			animation: moveToTop .7s ease-in-out both;
-			-webkit-animation: moveToTop .7s ease-in-out both;
+			animation: moveToTop .7s ease both;
+			-webkit-animation: moveToTop .7s ease both;
 		}
 
 		.pt-page-moveFromBottom {
@@ -71,8 +88,8 @@ html, body {
 		}
 
 		.pt-page-moveToBottom {
-			animation: moveToBottom .7s ease-in-out both;
-			-webkit-animation: moveToBottom .7s ease-in-out both;
+			animation: moveToBottom .7s ease both;
+			-webkit-animation: moveToBottom .7s ease both;
 		}
 
 		.pt-page-moveFromTop {
@@ -155,7 +172,7 @@ html, body {
 		margin-left: -475px;
 
 		color: #fff;
-		font: 700 90px/1 Arial;
+		font: 700 50px/1 Arial;
 
 		text-align: center;
 
