@@ -5,32 +5,77 @@ function pageslider(item) {
 		$page = $this.children,
 		winH = window.innerHeight || document.documentElement.clientHeight,
 		winW = window.innerWidth || document.documentElement.clientWidth,
+		location = window.location,
+		hash = location.hash,
 		nowWheel,
 		nowHandle,
 		lastCallWhile = 0,
 		lastCallHandle = 0,
+		$pageActive,
+		$noActivePage,
 		pageActive = 0,
 		pageCount = $page.length - 1,
 		pageLength = $this.children.length,
+		pageCenter = Math.round(pageLength/2),
 		delta,
 		deltaPrev = 0,
 		touchStartPoint = {},
 		touchNowPoint,
 		yAbs,
 
-		animationTime = 700,
-		delayTime = animationTime,
+		animationTime = .7,
+		delayTime = animationTime*1000,
+		
 		loop = true,
+		navKeyloop = true,
+
+		$toTop = false,
 		$navLi = document.getElementById('pageslider__nav').children,  // id of main nav > li
 		$textBlock = document.getElementById('pageslider__for-text'),
-		prevNav = true,
+
 		$prev = document.getElementById('b-navkey__prev'),
-		nextNav = true,
 		$next = document.getElementById('b-navkey__next'),
-		navKeyloop = true,
-		textArray = ['Ты можешь...', '... вставить текст ...', '... в зависимости ...', '... от слайда ...', 'Oliw Page Slider'];
+
+		textArray = ['Ты можешь...', '... вставить текст ...', '... в зависимости ...', '... от слайда ...', 'Oliw Page Slider'],
+		hrefArray = 'layout';
 
 
+	if (hrefArray == 'layout') {  // add hashes from nav
+		hrefArray = [];
+
+		var thisHash;
+
+		for (var i = 0; i < $navLi.length; i++) {
+			thisHash = $navLi[i].querySelector('a').getAttribute('href');
+
+			hrefArray.push(thisHash);
+		}
+	}
+
+
+
+	if (hrefArray) { // to active page
+		// read active block from nav
+
+		var thisHash,
+			regexp = /^#./;
+
+		for (var i = 0; i < hrefArray.length; i++) {
+
+			if( !(regexp.test(hrefArray[i])) ) {
+				thisHash = '#' + hrefArray[i];
+			} else {
+				thisHash = hrefArray[i];
+			}
+			
+			if (hash == thisHash) {
+				pageActive = i;
+				break;
+			} else if (i == hrefArray.length - 1) {
+				location.hash = hrefArray[0];
+			}
+		}
+	}
 
 	$page[pageActive].classList.add('active');
 
@@ -81,19 +126,17 @@ function pageslider(item) {
 
 	}, false);
 
-
-
-	window.addEventListener('scrollDown', function() {
+	window.addEventListener('scrollDown', function(event) {
         handle(1, delayTime);
     });
 
-	window.addEventListener('scrollUp', function() {
+	window.addEventListener('scrollUp', function(event) {
         handle(-1, delayTime);
     });
 
 
 
-	if (prevNav) {
+	if ( $prev ) {
 
 		$prev.addEventListener('click', function(event) {
 			fnPrevNav();
@@ -105,7 +148,7 @@ function pageslider(item) {
 
 	}
 
-	if (nextNav) {
+	if ( $next ) {
 
 		$next.addEventListener('click', function(event) {
 			fnNextNav();
@@ -117,6 +160,16 @@ function pageslider(item) {
 
 	}
 
+	if ( $toTop ) {
+		$toTop.addEventListener('click', function(event) {
+			toTop();
+		}, false);
+
+		$toTop.addEventListener('touchend', function(event) {
+			toTop();
+		}, false);
+	}
+
 
 
 	for (var i = 0; i < $navLi.length; i++) {
@@ -124,14 +177,41 @@ function pageslider(item) {
 		$navLi[i].num = i;
 
 		$navLi[i].addEventListener('click', function(event) {
+			event.preventDefault();
 			clickNav(this);
 		}, false);
 
 		$navLi[i].addEventListener('touchend', function(event) {
+			event.preventDefault();
 			clickNav(this);
 		}, false);
 
 	};
+
+	function toTop() {
+
+		if ( pageActive != 0 ) {
+
+			if (pageActive < pageCenter) {
+				delta = -1;
+
+				noActivePage = pageActive;
+				
+				handle(delta, animationTime, true, 0, noActivePage);
+
+			} else {
+				delta = 1;
+
+				noActivePage = pageActive;
+
+				handle(delta, animationTime, true, 0, noActivePage);
+			}
+		}
+	}
+
+
+
+	function fnOpacity() { $noActivePage.style.cssText = 'opacity: 0'; }  // for this project
 
 
 
@@ -143,6 +223,10 @@ function pageslider(item) {
 
 		if (textArray) {
 			$textBlock.innerHTML = textArray[pageActive];
+		}
+
+		if (hrefArray) {
+			location.hash = hrefArray[pageActive];
 		}
 	}
 
@@ -163,7 +247,7 @@ function pageslider(item) {
 
 			delta = -1;
 			
-			handle(delta, animationTime);
+			handle(delta, delayTime);
 		}
 	}
 
@@ -182,7 +266,7 @@ function pageslider(item) {
 
 			delta = 1;
 			
-			handle(delta, animationTime);
+			handle(delta, delayTime);
 		}
 
 	}
@@ -220,7 +304,7 @@ function pageslider(item) {
 
 			noActivePage = pageActive;
 			
-			handle(delta, animationTime);
+			handle(delta, delayTime);
 
 		} else if ( keyCode == 83 || keyCode == 40 ) {
 			// 83 - is letter 'W'
@@ -229,7 +313,7 @@ function pageslider(item) {
 
 			noActivePage = pageActive;
 
-			handle(delta, animationTime);
+			handle(delta, delayTime);
 		}
 	}
 
@@ -253,73 +337,76 @@ function pageslider(item) {
 
 		if (nowHandle - lastCallHandle > delay) {
 
+			$body.classList.add('onanimation');
+
 			if ( delta > 0 ) {
 
+				classClean();
+
 				if (nav) {
-					
+
 					pageActive = i;
 
-					classClean();
-
-					$page[pageActive].classList.add('active', 'pt-page-moveFromBottom');
-					$page[noActivePage].classList.add('active', 'pt-page-moveToTop', 'pt-page-ontop');
+					$pageActive = $page[pageActive],
+					$noActivePage = $page[noActivePage];
 				
 				} else {
 
 					if ( !( pageActive == pageCount ) ) {
 
-						classClean();
-
 						pageActive++;
 
-						$page[pageActive].classList.add('active', 'pt-page-moveFromBottom');
-						$page[pageActive].previousElementSibling.classList.add('active', 'pt-page-moveToTop', 'pt-page-ontop');
+						$pageActive = $page[pageActive],
+						$noActivePage = $page[pageActive].previousElementSibling;
+
 					} else if ( pageActive == pageCount && loop ) {
-						classClean();
 
 						pageActive = 0;
 
-						$page[pageActive].classList.add('active', 'pt-page-moveFromBottom');
-						$page[pageCount].classList.add('active', 'pt-page-moveToTop', 'pt-page-ontop');
+						$pageActive = $page[pageActive],
+						$noActivePage = $page[pageCount];
 					}
 				}
 
+				$pageActive.classList.add('active', 'pt-page-moveFromBottom');
+				$noActivePage.classList.add('active', 'pt-page-ontop', 'pt-page-moveToTop');
+
 			} else if ( delta < 0 ) {
+				
+				classClean();
 
 				if (nav) {
-					
+
 					pageActive = i;
 
-					classClean();
-
-					$page[pageActive].classList.add('active', 'pt-page-moveFromTop', 'pt-page-ontop');
-					$page[noActivePage].classList.add('active', 'pt-page-moveToBottom');
+					$pageActive = $page[pageActive],
+					$noActivePage = $page[noActivePage];
 				
 				} else {
 
 					if ( !(pageActive == 0) ) {
 
-						classClean();
-
 						pageActive--;
 
-						$page[pageActive].classList.add('active', 'pt-page-moveFromTop', 'pt-page-ontop');
-						$page[pageActive].nextElementSibling.classList.add('active', 'pt-page-moveToBottom');
+						$pageActive = $page[pageActive],
+						$noActivePage = $page[pageActive].nextElementSibling;
+
 					} else if ( pageActive == 0 && loop ) {
 
-						classClean();
+						$pageActive = $page[pageCount],
+						$noActivePage = $page[pageActive];
 
-						pageActive = pageCount;
-
-						$page[pageActive].classList.add('active', 'pt-page-moveFromTop', 'pt-page-ontop');
-						$page[0].classList.add('active', 'pt-page-moveToBottom');
+						pageActive = pageCount; // it should be here!
 					}
 				}
+
+				$pageActive.classList.add('active', 'pt-page-ontop', 'pt-page-moveFromTop');
+				$noActivePage.classList.add('active', 'pt-page-moveToBottom');
 			}
 
 			sliderActive(pageActive);
 
-			setTimeout(func, animationTime);
+			setTimeout(func, delayTime);
 
 			lastCallHandle = nowHandle;
 		}
@@ -332,6 +419,7 @@ function pageslider(item) {
 	//add active class for new slider
 
 		for (var i = pageCount; i >= 0; i--) {
+			$body.classList.remove('onanimation');
 			$page[i].classList.remove('active', 'pt-page-ontop', 'pt-page-moveFromBottom', 'pt-page-moveToTop', 'pt-page-moveToBottom', 'pt-page-moveFromTop');
 		};
 

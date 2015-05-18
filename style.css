@@ -32,13 +32,15 @@ h1 {
 			height: 100%;
 
 			position: absolute;
-			top: 0;
+			top: 0%;
 			left: 0;
 			z-index: 1;
 
 			visibility: hidden;
 			backface-visibility: hidden;
 			overflow: hidden;
+
+			transform: translateY(0%);
 		}
 
 		.pt-page-ontop {
@@ -77,26 +79,26 @@ h1 {
 			visibility: visible;
 		}
 		
-		.pt-page-moveToTop {
+		 .pt-page-moveToTop {
 			animation: moveToTop .7s ease both;
 			-webkit-animation: moveToTop .7s ease both;
 		}
-
+		
 		.pt-page-moveFromBottom {
 			animation: moveFromBottom .6s ease both;
 			-webkit-animation: moveFromBottom .6s ease both;
 		}
-
+		
 		.pt-page-moveToBottom {
 			animation: moveToBottom .7s ease both;
 			-webkit-animation: moveToBottom .7s ease both;
 		}
-
+		
 		.pt-page-moveFromTop {
 			animation: moveFromTop .6s ease both;
 			-webkit-animation: moveFromTop .6s ease both;
 		}
-
+		
 		@-webkit-keyframes moveToTop {
 			from {
 			}
@@ -105,7 +107,7 @@ h1 {
 				transform: translateY(-100%);
 			}
 		}
-
+		
 		@keyframes moveToTop {
 			from {
 			}
@@ -114,35 +116,35 @@ h1 {
 				transform: translateY(-100%);
 			}
 		}
-
+		
 		@-webkit-keyframes moveFromBottom {
 			from {
 				-webkit-transform: translateY(100%);
 				transform: translateY(100%);
 			}
 		}
-
+		
 		@keyframes moveFromBottom {
 			from {
 				-webkit-transform: translateY(100%);
 				transform: translateY(100%);
 			}
 		}
-
+		
 		@-webkit-keyframes moveFromTop {
 			from {
 				-webkit-transform: translateY(-100%);
 				transform: translateY(-100%);
 			}
 		}
-
+		
 		@keyframes moveFromTop {
 			from {
 				-webkit-transform: translateY(-100%);
 				transform: translateY(-100%);
 			}
 		}
-
+		
 		@-webkit-keyframes moveToBottom {
 			from {
 			}
@@ -151,7 +153,7 @@ h1 {
 				transform: translateY(100%);
 			}
 		}
-
+		
 		@keyframes moveToBottom {
 			from {
 			}
@@ -159,7 +161,7 @@ h1 {
 				-webkit-transform: translateY(100%);
 				transform: translateY(100%);
 			}
-		}
+		} 
 
 	.b-pogress {
 		width: 950px;

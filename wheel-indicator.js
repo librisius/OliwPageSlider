@@ -7,7 +7,9 @@
         direction: '',
         delta: '',
         timer: '',
-        eventWheel: 'onwheel' in document ? 'wheel' : 'mousewheel',
+        onWheel: ('onwheel' in document) ? 'wheel' : 
+                 ('onmousewheel' in document) ? 'mousewheel' :
+                 'MozMousePixelScroll',
 
         addEvent: function(elem, type, handler){
             if(window.addEventListener) {
@@ -86,6 +88,27 @@
         },
 
         triggerEvent: function() {
+
+            try {
+                new CustomEvent("IE has CustomEvent, but doesn't support constructor");
+            } catch (e) {
+
+                window.CustomEvent = function(event, params) {
+                    var evt;
+                    params = params || {
+                        bubbles: false,
+                        cancelable: false,
+                        detail: undefined
+                    };
+                    
+                    evt = document.createEvent("CustomEvent");
+                    evt.initCustomEvent(event, params.bubbles, params.cancelable, params.detail);
+                    return evt;
+                };
+
+                CustomEvent.prototype = Object.create(window.Event.prototype);
+            };
+
             var scrollUp    = new CustomEvent('scrollUp'),
                 scrollDown  = new CustomEvent('scrollDown');
 
@@ -96,7 +119,8 @@
         }
     };
 
-    wheelIndicator.addEvent(document, wheelIndicator.eventWheel, function(event) {
+    wheelIndicator.addEvent(document, wheelIndicator.onWheel, function(event) {
+        event.preventDefault ? event.preventDefault() : (event.returnValue = false); // by libris
         wheelIndicator.processDelta(wheelIndicator.getDeltaY(event));
     });
 }());
