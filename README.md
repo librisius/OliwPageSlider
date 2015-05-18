@@ -1,4 +1,4 @@
-<a href="http://oliwlife.ru/works/libris/OliwPageSlider">Demo</a>
+<a target="_blank" href="http://oliwlife.ru/works/libris/OliwPageSlider">Demo</a>
 
 # Oliw Page Slider
 Слайдер сделанный для постраничной прокрутки, есть поддержка сенсорных мышей, навигации по клавиатуре (вверх, вниз, w, s)
