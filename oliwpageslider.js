@@ -1,35 +1,36 @@
-function pageslider(item) {
+function pageslider(item, callback) {
 
 	var $this = item,
 		$body = document.body,
 		$page = $this.children,
 		winH = window.innerHeight || document.documentElement.clientHeight,
-		winW = window.innerWidth || document.documentElement.clientWidth,
 		location = window.location,
 		hash = location.hash,
 		nowWheel,
 		nowHandle,
 		lastCallWhile = 0,
 		lastCallHandle = 0,
+		pageActive = 0,
 		$pageActive,
 		$noActivePage,
-		pageActive = 0,
 		pageCount = $page.length - 1,
 		pageLength = $this.children.length,
 		pageCenter = Math.round(pageLength/2),
+		moveFlag = true,
 		delta,
 		deltaPrev = 0,
-		touchStartPoint = {},
+		touchStartPoint,
+		touchMovePoint,
 		touchNowPoint,
 		yAbs,
 
 		animationTime = .7,
 		delayTime = animationTime*1000,
 		
-		loop = true,
+		loop = false,
 		navKeyloop = true,
 
-		$toTop = false,
+		$toTop = document.getElementById('pageslider__to-top'),
 		$navLi = document.getElementById('pageslider__nav').children,  // id of main nav > li
 		$textBlock = document.getElementById('pageslider__for-text'),
 
@@ -70,6 +71,7 @@ function pageslider(item) {
 			
 			if (hash == thisHash) {
 				pageActive = i;
+				$pageActive = $page[pageActive]
 				break;
 			} else if (i == hrefArray.length - 1) {
 				location.hash = hrefArray[0];
@@ -77,7 +79,7 @@ function pageslider(item) {
 		}
 	}
 
-	$page[pageActive].classList.add('active');
+	$pageActive.classList.add('active');
 
 	sliderActive(pageActive);
 
@@ -86,10 +88,34 @@ function pageslider(item) {
 	// Touch
 	document.addEventListener('touchstart', function(event) {
 
-		event.preventDefault();
-		event.stopPropagation();
+		touchStartPoint = event.changedTouches[0].clientY;
 
-		touchStartPoint.y = event.changedTouches[0].pageY;
+	}, false);
+
+
+
+	document.addEventListener('touchmove', function(event) {
+
+		var $children = $pageActive.children[0];
+
+		if ($children.clientHeight > winH) {
+			moveFlag = false;
+
+			if ($children.getBoundingClientRect().top == 0) {
+				moveFlag = true;
+			}
+
+			if (Math.abs($children.getBoundingClientRect().top) == $children.clientHeight - winH) {
+				moveFlag = true;
+			}
+		}
+		else {
+			moveFlag = true;
+
+			touchMovePoint = event.changedTouches[0].clientY;
+
+			$pageActive.style.transform = 'translateY(' + -(touchStartPoint - touchMovePoint) + 'px' + ')';
+		}
 
 	}, false);
 
@@ -99,11 +125,13 @@ function pageslider(item) {
 
 		touchNowPoint = event.changedTouches[0];
 
-		yAbs = Math.abs(touchStartPoint.y - touchNowPoint.pageY);
+		yAbs = Math.abs(touchStartPoint - touchNowPoint.clientY);
 
-		if (yAbs > 20) {
+		$pageActive.style.transform = '';
 
-			if (touchNowPoint.pageY < touchStartPoint.y) {
+		if (yAbs > winH/4 && moveFlag) {
+
+			if (touchNowPoint.clientY < touchStartPoint) {
 				delta = 1;
 			}
 			else {
@@ -113,6 +141,7 @@ function pageslider(item) {
 			handle(delta, delayTime, false);
 
 		}
+
 	}, false);
 
 
@@ -134,6 +163,10 @@ function pageslider(item) {
         handle(-1, delayTime);
     });
 
+	window.addEventListener('resize', function(event) {
+        winH = window.innerHeight || document.documentElement.clientHeight
+    });
+
 
 
 	if ( $prev ) {
@@ -145,7 +178,6 @@ function pageslider(item) {
 		$prev.addEventListener('touchend', function(event) {
 			fnPrevNav();
 		}, false);
-
 	}
 
 	if ( $next ) {
@@ -157,10 +189,10 @@ function pageslider(item) {
 		$next.addEventListener('touchend', function(event) {
 			fnNextNav();
 		}, false);
-
 	}
 
 	if ( $toTop ) {
+
 		$toTop.addEventListener('click', function(event) {
 			toTop();
 		}, false);
@@ -211,23 +243,22 @@ function pageslider(item) {
 
 
 
-	function fnOpacity() { $noActivePage.style.cssText = 'opacity: 0'; }  // for this project
-
-
-
 	function sliderActive(pageActive) {
 
 		$body.setAttribute( 'data-pageslider-progress', Math.round(100 / (pageLength - 1) * pageActive) );
 		$body.setAttribute( 'data-pageslider-number', pageActive + 1 );
 		$navLi[pageActive].classList.add('active');
 
-		if (textArray) {
-			$textBlock.innerHTML = textArray[pageActive];
-		}
+		setTimeout(function() { //weaknesses
 
-		if (hrefArray) {
-			location.hash = hrefArray[pageActive];
-		}
+			if (textArray) {
+				$textBlock.innerHTML = textArray[pageActive];
+			}
+
+			if (hrefArray) {
+				location.hash = hrefArray[pageActive];
+			}
+		}, delayTime - 700);
 	}
 
 
@@ -326,7 +357,6 @@ function pageslider(item) {
 			$page[i].classList.remove('active');
 			$navLi[i].classList.remove('active');
 		};
-
 	}
 
 
@@ -337,78 +367,129 @@ function pageslider(item) {
 
 		if (nowHandle - lastCallHandle > delay) {
 
+			callback();
+
 			$body.classList.add('onanimation');
 
 			if ( delta > 0 ) {
 
-				classClean();
-
 				if (nav) {
+				
+					classClean();
 
 					pageActive = i;
 
 					$pageActive = $page[pageActive],
 					$noActivePage = $page[noActivePage];
+
+					$pageActive.classList.add('active', 'pt-page-moveFromBottom');
+					$noActivePage.classList.add('active', 'pt-page-ontop', 'pt-page-moveToTop');
+
+					sliderActive(pageActive);
+
+					setTimeout(func, delayTime);
+
+					lastCallHandle = nowHandle;
 				
 				} else {
 
 					if ( !( pageActive == pageCount ) ) {
+				
+						classClean();
 
 						pageActive++;
 
 						$pageActive = $page[pageActive],
 						$noActivePage = $page[pageActive].previousElementSibling;
 
+						$pageActive.classList.add('active', 'pt-page-moveFromBottom');
+						$noActivePage.classList.add('active', 'pt-page-ontop', 'pt-page-moveToTop');
+
+						sliderActive(pageActive);
+
+						setTimeout(func, delayTime);
+
+						lastCallHandle = nowHandle;
+
 					} else if ( pageActive == pageCount && loop ) {
+				
+						classClean();
 
 						pageActive = 0;
 
 						$pageActive = $page[pageActive],
 						$noActivePage = $page[pageCount];
+
+						$pageActive.classList.add('active', 'pt-page-moveFromBottom');
+						$noActivePage.classList.add('active', 'pt-page-ontop', 'pt-page-moveToTop');
+
+						sliderActive(pageActive);
+
+						setTimeout(func, delayTime);
+
+						lastCallHandle = nowHandle;
 					}
 				}
-
-				$pageActive.classList.add('active', 'pt-page-moveFromBottom');
-				$noActivePage.classList.add('active', 'pt-page-ontop', 'pt-page-moveToTop');
-
 			} else if ( delta < 0 ) {
-				
-				classClean();
 
 				if (nav) {
+				
+					classClean();
 
 					pageActive = i;
 
 					$pageActive = $page[pageActive],
 					$noActivePage = $page[noActivePage];
-				
+
+					$pageActive.classList.add('active', 'pt-page-ontop', 'pt-page-moveFromTop');
+					$noActivePage.classList.add('active', 'pt-page-moveToBottom');
+
+					sliderActive(pageActive);
+
+					setTimeout(func, delayTime);
+
+					lastCallHandle = nowHandle;
+
 				} else {
 
 					if ( !(pageActive == 0) ) {
+				
+						classClean();
 
 						pageActive--;
 
 						$pageActive = $page[pageActive],
 						$noActivePage = $page[pageActive].nextElementSibling;
 
+						$pageActive.classList.add('active', 'pt-page-ontop', 'pt-page-moveFromTop');
+						$noActivePage.classList.add('active', 'pt-page-moveToBottom');
+
+						sliderActive(pageActive);
+
+						setTimeout(func, delayTime);
+
+						lastCallHandle = nowHandle;
+
 					} else if ( pageActive == 0 && loop ) {
+				
+						classClean();
 
 						$pageActive = $page[pageCount],
 						$noActivePage = $page[pageActive];
 
 						pageActive = pageCount; // it should be here!
+
+						$pageActive.classList.add('active', 'pt-page-ontop', 'pt-page-moveFromTop');
+						$noActivePage.classList.add('active', 'pt-page-moveToBottom');
+
+						sliderActive(pageActive);
+
+						setTimeout(func, delayTime);
+
+						lastCallHandle = nowHandle;
 					}
 				}
-
-				$pageActive.classList.add('active', 'pt-page-ontop', 'pt-page-moveFromTop');
-				$noActivePage.classList.add('active', 'pt-page-moveToBottom');
 			}
-
-			sliderActive(pageActive);
-
-			setTimeout(func, delayTime);
-
-			lastCallHandle = nowHandle;
 		}
 
 	}
@@ -423,7 +504,7 @@ function pageslider(item) {
 			$page[i].classList.remove('active', 'pt-page-ontop', 'pt-page-moveFromBottom', 'pt-page-moveToTop', 'pt-page-moveToBottom', 'pt-page-moveFromTop');
 		};
 
-		$page[pageActive].classList.add('active');
+		$pageActive.classList.add('active');
 	}
 
 };

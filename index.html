@@ -2,6 +2,8 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
 	<title>Page Slider</title>
 
 	<link rel="shortcut icon" href="favicon.ico">
@@ -14,14 +16,27 @@
 <body>
 	<div id="wrap">
 		<div class="page">
-			<div>
+			<div class="innner">
 				<h1>Oliw Page Slider</h1>
 			</div>
 		</div>
-		<div class="page"></div>
-		<div class="page"></div>
-		<div class="page"></div>
-		<div class="page"></div>
+		<div class="page">
+			<div class="innner"></div>
+		</div>
+		<div class="page">
+			<div class="innner" id="a">
+				<h2>Страница со скроллом</h2>
+				<div class="big-block">
+					<div class="inside-block"></div>
+				</div>
+			</div>
+		</div>
+		<div class="page">
+			<div class="innner"></div>
+		</div>
+		<div class="page">
+			<div class="innner"></div>
+		</div>
 	</div>
 	<div class="b-pogress">
 		<span id="pageslider__for-text"></span>
@@ -54,7 +69,7 @@
 
 	<script src="http://cdnjs.cloudflare.com/ajax/libs/gsap/1.16.1/TweenMax.min.js"></script>
 	<script>
-		pageslider(document.getElementById('wrap'));
+		pageslider(document.getElementById('wrap'), function(){});
 	</script>
 </body>
 </html>
