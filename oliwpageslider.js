@@ -3,7 +3,7 @@ function pageslider(item, callback) {
 	var $this = item,
 		$body = document.body,
 		$page = $this.children,
-		winH = window.innerHeight || document.documentElement.clientHeight,
+		winH = document.documentElement.clientHeight || window.innerHeight,
 		location = window.location,
 		hash = location.hash,
 		nowWheel,
@@ -11,14 +11,18 @@ function pageslider(item, callback) {
 		lastCallWhile = 0,
 		lastCallHandle = 0,
 		pageActive = 0,
-		$pageActive,
+		$pageActive = $page[pageActive],
 		$noActivePage,
 		pageCount = $page.length - 1,
 		pageLength = $this.children.length,
 		pageCenter = Math.round(pageLength/2),
 		moveFlag = true,
 		delta,
+		clientTopMove,
+		childrenBtPos,
+		direction,
 		deltaPrev = 0,
+		clientTopStart,
 		touchStartPoint,
 		touchMovePoint,
 		touchNowPoint,
@@ -89,6 +93,7 @@ function pageslider(item, callback) {
 	document.addEventListener('touchstart', function(event) {
 
 		touchStartPoint = event.changedTouches[0].clientY;
+		clientTopStart = Math.round($pageActive.children[0].getBoundingClientRect().top);
 
 	}, false);
 
@@ -96,26 +101,9 @@ function pageslider(item, callback) {
 
 	document.addEventListener('touchmove', function(event) {
 
-		var $children = $pageActive.children[0];
+		touchMovePoint = event.changedTouches[0].clientY;
 
-		if ($children.clientHeight > winH) {
-			moveFlag = false;
-
-			if ($children.getBoundingClientRect().top == 0) {
-				moveFlag = true;
-			}
-
-			if (Math.abs($children.getBoundingClientRect().top) == $children.clientHeight - winH) {
-				moveFlag = true;
-			}
-		}
-		else {
-			moveFlag = true;
-
-			touchMovePoint = event.changedTouches[0].clientY;
-
-			$pageActive.style.transform = 'translateY(' + -(touchStartPoint - touchMovePoint) + 'px' + ')';
-		}
+		scrollslides();
 
 	}, false);
 
@@ -156,12 +144,22 @@ function pageslider(item, callback) {
 	}, false);
 
 	window.addEventListener('scrollDown', function(event) {
-        handle(1, delayTime);
+        scrollslides(1);
     });
 
 	window.addEventListener('scrollUp', function(event) {
-        handle(-1, delayTime);
+		scrollslides(-1);
     });
+
+
+
+	for (var i = 0; i < $page.length; i++) {
+
+		$page[i].children[0].addEventListener('wheel', function(event) {
+			scrollInSlide(this);
+	    });
+
+	};
 
 	window.addEventListener('resize', function(event) {
         winH = window.innerHeight || document.documentElement.clientHeight
@@ -219,6 +217,91 @@ function pageslider(item, callback) {
 		}, false);
 
 	};
+
+	function moveInSlide() {
+
+		var $children = $pageActive.children[0];
+
+		if ($children.clientHeight > winH) {
+			moveFlag = false;
+
+			clientTopMove = Math.round($children.getBoundingClientRect().top),
+			childrenBtPos = -( $children.clientHeight - winH),
+			direction = touchStartPoint - touchMovePoint;
+
+			if ( clientTopMove <= childrenBtPos && direction > 0 && clientTopStart == childrenBtPos ) {
+				moveInIgnore();
+			}
+			else if ( clientTopMove >= 0 && direction < 0 && clientTopStart == 0 ) {
+				moveInIgnore();
+			}
+			
+		}
+		else {
+			moveInIgnore();
+		}
+	}
+
+	function scrollslides(direction) {
+
+		var $children = $pageActive.children[0];
+
+		if ($children.clientHeight > winH) {
+			clientTopMove = Math.round($children.getBoundingClientRect().top),
+			childrenBtPos = -( $children.clientHeight - winH);
+
+			if ( clientTopMove <= childrenBtPos && direction > 0) {
+        		handle(direction, delayTime);
+			}
+			else if ( clientTopMove >= 0 && direction < 0) {
+        		handle(direction, delayTime);
+			}
+			
+		}
+		else {
+			handle(direction, delayTime);
+		}
+	}
+
+
+
+	function scrollInSlide(elem) {
+
+		var translateY = parseInt(elem.style.transform.replace(/\D+/g,"")) || 0,
+			newYpos,
+			$children = $pageActive.children[0],
+			clientTopMove = Math.round($children.getBoundingClientRect().top),
+			newYpos = translateY - event.wheelDelta;
+
+		if (newYpos > $children.clientHeight - winH) {
+			newYpos = $children.clientHeight - winH;
+		} else if (newYpos < 0) {
+			newYpos = 0;
+		}
+
+		if ( !(translateY == 0 && event.wheelDelta > 1) ) {
+
+			elem.style.transform = 'translateY(' + -newYpos + 'px' + ')';
+
+		} else if ( !(-$children.clientHeight == clientTopMove - winH && event.wheelDelta > -1) ) {
+
+			elem.style.transform = 'translateY(' + -newYpos + 'px' + ')';
+
+		}
+	}
+
+
+
+	function moveInIgnore() {
+		event.preventDefault();
+		event.stopPropagation();
+
+		moveFlag = true;
+
+		$pageActive.style.transform = 'translateY(' + -(touchStartPoint - touchMovePoint) + 'px' + ')';
+	}
+
+
 
 	function toTop() {
 
@@ -382,8 +465,13 @@ function pageslider(item, callback) {
 					$pageActive = $page[pageActive],
 					$noActivePage = $page[noActivePage];
 
-					$pageActive.classList.add('active', 'pt-page-moveFromBottom');
-					$noActivePage.classList.add('active', 'pt-page-ontop', 'pt-page-moveToTop');
+					// for ie
+					$pageActive.classList.add('pt-page-moveFromBottom');
+					$pageActive.classList.add('active');
+
+					$noActivePage.classList.add('active');
+					$noActivePage.classList.add('pt-page-ontop');
+					$noActivePage.classList.add('pt-page-moveToTop');
 
 					sliderActive(pageActive);
 
@@ -402,8 +490,13 @@ function pageslider(item, callback) {
 						$pageActive = $page[pageActive],
 						$noActivePage = $page[pageActive].previousElementSibling;
 
-						$pageActive.classList.add('active', 'pt-page-moveFromBottom');
-						$noActivePage.classList.add('active', 'pt-page-ontop', 'pt-page-moveToTop');
+						// for ie
+						$pageActive.classList.add('active');
+						$pageActive.classList.add('pt-page-moveFromBottom');
+
+						$noActivePage.classList.add('active');
+						$noActivePage.classList.add('pt-page-ontop');
+						$noActivePage.classList.add('pt-page-moveToTop');
 
 						sliderActive(pageActive);
 
@@ -420,8 +513,13 @@ function pageslider(item, callback) {
 						$pageActive = $page[pageActive],
 						$noActivePage = $page[pageCount];
 
-						$pageActive.classList.add('active', 'pt-page-moveFromBottom');
-						$noActivePage.classList.add('active', 'pt-page-ontop', 'pt-page-moveToTop');
+						// for ie
+						$pageActive.classList.add('active');
+						$pageActive.classList.add('pt-page-moveFromBottom');
+
+						$noActivePage.classList.add('active');
+						$noActivePage.classList.add('pt-page-ontop');
+						$noActivePage.classList.add('pt-page-moveToTop');
 
 						sliderActive(pageActive);
 
@@ -441,8 +539,13 @@ function pageslider(item, callback) {
 					$pageActive = $page[pageActive],
 					$noActivePage = $page[noActivePage];
 
-					$pageActive.classList.add('active', 'pt-page-ontop', 'pt-page-moveFromTop');
-					$noActivePage.classList.add('active', 'pt-page-moveToBottom');
+					// for ie
+					$pageActive.classList.add('active');
+					$pageActive.classList.add('pt-page-ontop');
+					$pageActive.classList.add('pt-page-moveFromTop');
+
+					$noActivePage.classList.add('active');
+					$noActivePage.classList.add('pt-page-moveToBottom');
 
 					sliderActive(pageActive);
 
@@ -461,8 +564,13 @@ function pageslider(item, callback) {
 						$pageActive = $page[pageActive],
 						$noActivePage = $page[pageActive].nextElementSibling;
 
-						$pageActive.classList.add('active', 'pt-page-ontop', 'pt-page-moveFromTop');
-						$noActivePage.classList.add('active', 'pt-page-moveToBottom');
+						// for ie
+						$pageActive.classList.add('active');
+						$pageActive.classList.add('pt-page-ontop');
+						$pageActive.classList.add('pt-page-moveFromTop');
+
+						$noActivePage.classList.add('active');
+						$noActivePage.classList.add('pt-page-moveToBottom');
 
 						sliderActive(pageActive);
 
@@ -479,8 +587,13 @@ function pageslider(item, callback) {
 
 						pageActive = pageCount; // it should be here!
 
-						$pageActive.classList.add('active', 'pt-page-ontop', 'pt-page-moveFromTop');
-						$noActivePage.classList.add('active', 'pt-page-moveToBottom');
+						// for ie
+						$pageActive.classList.add('active');
+						$pageActive.classList.add('pt-page-ontop');
+						$pageActive.classList.add('pt-page-moveFromTop');
+
+						$noActivePage.classList.add('active');
+						$noActivePage.classList.add('pt-page-moveToBottom');
 
 						sliderActive(pageActive);
 
@@ -501,7 +614,16 @@ function pageslider(item, callback) {
 
 		for (var i = pageCount; i >= 0; i--) {
 			$body.classList.remove('onanimation');
-			$page[i].classList.remove('active', 'pt-page-ontop', 'pt-page-moveFromBottom', 'pt-page-moveToTop', 'pt-page-moveToBottom', 'pt-page-moveFromTop');
+
+			var pageClassList = $page[i].classList;
+
+			// for ie
+			pageClassList.remove('active');
+			pageClassList.remove('pt-page-ontop');
+			pageClassList.remove('pt-page-moveFromBottom');
+			pageClassList.remove('pt-page-moveToTop');
+			pageClassList.remove('pt-page-moveToBottom');
+			pageClassList.remove('pt-page-moveFromTop');
 		};
 
 		$pageActive.classList.add('active');

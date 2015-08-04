@@ -67,7 +67,7 @@ h2 {
 
 			visibility: hidden;
 			backface-visibility: hidden;
-			overflow: auto;
+			overflow: hidden;
 
 			transform: translateY(0%);
 		}
@@ -108,7 +108,7 @@ h2 {
 			visibility: visible;
 		}
 		
-		 .pt-page-moveToTop {
+		.pt-page-moveToTop {
 			animation: moveToTop .7s ease both;
 			-webkit-animation: moveToTop .7s ease both;
 		}
@@ -307,6 +307,35 @@ h2 {
 				background: #f68dbb;
 			}
 
+	.b-console-log {
+		display: none;
+
+		width: 90%;
+
+		position: absolute;
+		bottom: 150px;
+		left: 50%;
+		z-index: 9;
+
+		padding: 15px;
+		margin-left: -45%;
+
+		background-color: #fff;
+
+		color: rgb(115, 115, 115);
+		font: 700 13px Arial;
+		letter-spacing: 0.05em;
+
+		text-align: center;
+	}
+
+		.b-console-log span {
+			margin: 0 5px;
+
+			color: rgb(253, 106, 98);
+			font-weight: 500;
+		}
+
 @media only screen and (max-width: 480px) {
 
 	h1 {
@@ -384,4 +413,8 @@ h2 {
 					font-size: 15px;
 					line-height: 40px; /* like height */
 				}
+
+		.b-console-log {
+			display: block;
+		}
 }
