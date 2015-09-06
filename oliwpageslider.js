@@ -41,7 +41,7 @@ function pageslider(item, callback) {
 		$prev = document.getElementById('b-navkey__prev'),
 		$next = document.getElementById('b-navkey__next'),
 
-		textArray = ['Ты можешь...', '... вставить текст ...', '... в зависимости ...', '... от слайда ...', 'Oliw Page Slider'],
+		textArray = ['You can...', '... add some text ...', '... which depends of ...', '... slide ...', 'Oliw Page Slider'],
 		hrefArray = 'layout';
 
 
@@ -103,8 +103,6 @@ function pageslider(item, callback) {
 
 		touchMovePoint = event.changedTouches[0].clientY;
 
-		scrollslides();
-
 	}, false);
 
 
@@ -157,6 +155,7 @@ function pageslider(item, callback) {
 
 		$page[i].children[0].addEventListener('wheel', function(event) {
 			scrollInSlide(this);
+
 	    });
 
 	};
@@ -202,21 +201,23 @@ function pageslider(item, callback) {
 
 
 
-	for (var i = 0; i < $navLi.length; i++) {
+	if ($navLi !== null) {
+		for (var i = 0; i < $navLi.length; i++) {
 
-		$navLi[i].num = i;
+			$navLi[i].num = i;
 
-		$navLi[i].addEventListener('click', function(event) {
-			event.preventDefault();
-			clickNav(this);
-		}, false);
+			$navLi[i].addEventListener('click', function(event) {
+				event.preventDefault();
+				clickNav(this);
+			}, false);
 
-		$navLi[i].addEventListener('touchend', function(event) {
-			event.preventDefault();
-			clickNav(this);
-		}, false);
+			$navLi[i].addEventListener('touchend', function(event) {
+				event.preventDefault();
+				clickNav(this);
+			}, false);
 
-	};
+		};
+	}
 
 	function moveInSlide() {
 
@@ -265,29 +266,29 @@ function pageslider(item, callback) {
 
 
 
-	function scrollInSlide(elem) {
+	function scrollInSlide($elem) {
 
-		var translateY = parseInt(elem.style.transform.replace(/\D+/g,"")) || 0,
+		var translateY = parseInt($elem.style.transform.replace(/\D+/g,"")) || 0,
 			newYpos,
-			$children = $pageActive.children[0],
-			clientTopMove = Math.round($children.getBoundingClientRect().top),
+			clientTopMove = Math.round($elem.getBoundingClientRect().top),
 			newYpos = translateY - event.wheelDelta;
 
-		if (newYpos > $children.clientHeight - winH) {
-			newYpos = $children.clientHeight - winH;
+		if (newYpos > $elem.clientHeight - winH) {
+			newYpos = $elem.clientHeight - winH;
 		} else if (newYpos < 0) {
 			newYpos = 0;
 		}
 
 		if ( !(translateY == 0 && event.wheelDelta > 1) ) {
 
-			elem.style.transform = 'translateY(' + -newYpos + 'px' + ')';
+			$elem.style.transform = 'translateY(' + -newYpos + 'px' + ')';
 
-		} else if ( !(-$children.clientHeight == clientTopMove - winH && event.wheelDelta > -1) ) {
+		} else if ( !(-$elem.clientHeight == clientTopMove - winH && event.wheelDelta > -1) ) {
 
-			elem.style.transform = 'translateY(' + -newYpos + 'px' + ')';
+			$elem.style.transform = 'translateY(' + -newYpos + 'px' + ')';
 
 		}
+			console.log($elem, $elem.clientHeight, newYpos)
 	}
 
 
@@ -295,6 +296,8 @@ function pageslider(item, callback) {
 	function moveInIgnore() {
 		event.preventDefault();
 		event.stopPropagation();
+
+		console.log(touchStartPoint, touchMovePoint);
 
 		moveFlag = true;
 
@@ -330,7 +333,10 @@ function pageslider(item, callback) {
 
 		$body.setAttribute( 'data-pageslider-progress', Math.round(100 / (pageLength - 1) * pageActive) );
 		$body.setAttribute( 'data-pageslider-number', pageActive + 1 );
-		$navLi[pageActive].classList.add('active');
+
+		if ($navLi !== null) {
+			$navLi[pageActive].classList.add('active');
+		}
 
 		setTimeout(function() { //weaknesses
 
@@ -438,7 +444,10 @@ function pageslider(item, callback) {
 
 		for (var i = pageCount; i >= 0; i--) {
 			$page[i].classList.remove('active');
-			$navLi[i].classList.remove('active');
+
+			if ($navLi !== null) {
+				$navLi[i].classList.remove('active');
+			}
 		};
 	}
 
@@ -604,7 +613,6 @@ function pageslider(item, callback) {
 				}
 			}
 		}
-
 	}
 
 
