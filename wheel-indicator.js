@@ -120,7 +120,6 @@
     };
 
     wheelIndicator.addEvent(document, wheelIndicator.onWheel, function(event) {
-        event.preventDefault ? event.preventDefault() : (event.returnValue = false); // by libris
         wheelIndicator.processDelta(wheelIndicator.getDeltaY(event));
     });
 }());

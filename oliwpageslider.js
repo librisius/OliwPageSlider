@@ -16,7 +16,6 @@ function pageslider(item, callback) {
 		pageCount = $page.length - 1,
 		pageLength = $this.children.length,
 		pageCenter = Math.round(pageLength/2),
-		moveFlag = true,
 		delta,
 		clientTopMove,
 		childrenBtPos,
@@ -115,7 +114,7 @@ function pageslider(item, callback) {
 
 		$pageActive.style.transform = '';
 
-		if (yAbs > winH/4 && moveFlag) {
+		if (yAbs > winH/4) {
 
 			if (touchNowPoint.clientY < touchStartPoint) {
 				delta = 1;
@@ -148,17 +147,6 @@ function pageslider(item, callback) {
 	window.addEventListener('scrollUp', function(event) {
 		scrollslides(-1);
     });
-
-
-
-	for (var i = 0; i < $page.length; i++) {
-
-		$page[i].children[0].addEventListener('wheel', function(event) {
-			scrollInSlide(this);
-
-	    });
-
-	};
 
 	window.addEventListener('resize', function(event) {
         winH = window.innerHeight || document.documentElement.clientHeight
@@ -219,30 +207,6 @@ function pageslider(item, callback) {
 		};
 	}
 
-	function moveInSlide() {
-
-		var $children = $pageActive.children[0];
-
-		if ($children.clientHeight > winH) {
-			moveFlag = false;
-
-			clientTopMove = Math.round($children.getBoundingClientRect().top),
-			childrenBtPos = -( $children.clientHeight - winH),
-			direction = touchStartPoint - touchMovePoint;
-
-			if ( clientTopMove <= childrenBtPos && direction > 0 && clientTopStart == childrenBtPos ) {
-				moveInIgnore();
-			}
-			else if ( clientTopMove >= 0 && direction < 0 && clientTopStart == 0 ) {
-				moveInIgnore();
-			}
-			
-		}
-		else {
-			moveInIgnore();
-		}
-	}
-
 	function scrollslides(direction) {
 
 		var $children = $pageActive.children[0];
@@ -262,46 +226,6 @@ function pageslider(item, callback) {
 		else {
 			handle(direction, delayTime);
 		}
-	}
-
-
-
-	function scrollInSlide($elem) {
-
-		var translateY = parseInt($elem.style.transform.replace(/\D+/g,"")) || 0,
-			newYpos,
-			clientTopMove = Math.round($elem.getBoundingClientRect().top),
-			newYpos = translateY - event.wheelDelta;
-
-		if (newYpos > $elem.clientHeight - winH) {
-			newYpos = $elem.clientHeight - winH;
-		} else if (newYpos < 0) {
-			newYpos = 0;
-		}
-
-		if ( !(translateY == 0 && event.wheelDelta > 1) ) {
-
-			$elem.style.transform = 'translateY(' + -newYpos + 'px' + ')';
-
-		} else if ( !(-$elem.clientHeight == clientTopMove - winH && event.wheelDelta > -1) ) {
-
-			$elem.style.transform = 'translateY(' + -newYpos + 'px' + ')';
-
-		}
-			console.log($elem, $elem.clientHeight, newYpos)
-	}
-
-
-
-	function moveInIgnore() {
-		event.preventDefault();
-		event.stopPropagation();
-
-		console.log(touchStartPoint, touchMovePoint);
-
-		moveFlag = true;
-
-		$pageActive.style.transform = 'translateY(' + -(touchStartPoint - touchMovePoint) + 'px' + ')';
 	}
 
 

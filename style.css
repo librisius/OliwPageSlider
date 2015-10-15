@@ -67,7 +67,7 @@ h2 {
 
 			visibility: hidden;
 			backface-visibility: hidden;
-			overflow: hidden;
+			overflow: auto;
 
 			transform: translateY(0%);
 		}
