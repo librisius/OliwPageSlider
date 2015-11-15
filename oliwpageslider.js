@@ -383,7 +383,7 @@ function pageslider(item, callback) {
 
 		if (nowHandle - lastCallHandle > delay) {
 
-			callback();
+			if (callback) callback();
 
 			$body.classList.add('onanimation');
 
