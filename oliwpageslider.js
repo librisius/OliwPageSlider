@@ -34,7 +34,7 @@ function pageslider(item, callback) {
 		navKeyloop = true,
 
 		$toTop = document.getElementById('pageslider__to-top'),
-		$navLi = document.getElementById('pageslider__nav').children,  // id of main nav > li
+		$navLi = document.getElementById('pageslider__nav').children, // id of main nav > li
 		$textBlock = document.getElementById('pageslider__for-text'),
 
 		$prev = document.getElementById('b-navkey__prev'),
@@ -44,7 +44,7 @@ function pageslider(item, callback) {
 		hrefArray = 'layout';
 
 
-	if (hrefArray == 'layout') {  // add hashes from nav
+	if (hrefArray == 'layout') { // add hashes from nav
 		hrefArray = [];
 
 		var thisHash;
@@ -141,16 +141,16 @@ function pageslider(item, callback) {
 	}, false);
 
 	window.addEventListener('scrollDown', function(event) {
-        scrollslides(1);
-    });
+		scrollslides(1);
+	});
 
 	window.addEventListener('scrollUp', function(event) {
 		scrollslides(-1);
-    });
+	});
 
 	window.addEventListener('resize', function(event) {
-        winH = window.innerHeight || document.documentElement.clientHeight
-    });
+		winH = window.innerHeight || document.documentElement.clientHeight
+	});
 
 
 
@@ -216,10 +216,10 @@ function pageslider(item, callback) {
 			childrenBtPos = -( $children.clientHeight - winH);
 
 			if ( clientTopMove <= childrenBtPos && direction > 0) {
-        		handle(direction, delayTime);
+				handle(direction, delayTime);
 			}
 			else if ( clientTopMove >= 0 && direction < 0) {
-        		handle(direction, delayTime);
+				handle(direction, delayTime);
 			}
 			
 		}
