@@ -1,47 +1,47 @@
 function pageslider(item, callback) {
 
-	var $this = item,
-		$body = document.body,
-		$page = $this.children,
-		winH = document.documentElement.clientHeight || window.innerHeight,
-		location = window.location,
-		hash = location.hash,
+	var $this			= item,
+		$body			= document.body,
+		$page			= $this.children,
+		winH			= document.documentElement.clientHeight || window.innerHeight,
+		location		= window.location,
+		hash			= location.hash,
 		nowWheel,
 		nowHandle,
-		lastCallWhile = 0,
-		lastCallHandle = 0,
-		pageActive = 0,
-		$pageActive = $page[pageActive],
+		lastCallWhile	= 0,
+		lastCallHandle	= 0,
+		pageActive		= 0,
+		$pageActive		= $page[pageActive],
 		$noActivePage,
-		pageCount = $page.length - 1,
-		pageLength = $this.children.length,
-		pageCenter = Math.round(pageLength/2),
+		pageCount		= $page.length - 1,
+		pageLength		= $this.children.length,
+		pageCenter		= Math.round(pageLength/2),
 		delta,
 		clientTopMove,
 		childrenBtPos,
 		direction,
-		deltaPrev = 0,
+		deltaPrev		= 0,
 		clientTopStart,
 		touchStartPoint,
 		touchMovePoint,
 		touchNowPoint,
 		yAbs,
 
-		animationTime = .7,
-		delayTime = animationTime*1000,
+		animationTime	= .7,
+		delayTime		= animationTime * 1000,
 		
-		loop = false,
-		navKeyloop = true,
+		loop			= false,
+		navKeyloop		= true,
 
-		$toTop = document.getElementById('pageslider__to-top'),
-		$navLi = document.getElementById('pageslider__nav').children, // id of main nav > li
-		$textBlock = document.getElementById('pageslider__for-text'),
+		$toTop			= document.getElementById('pageslider__to-top'),
+		$navLi			= document.getElementById('pageslider__nav').children, // id of main nav > li
+		$textBlock		= document.getElementById('pageslider__for-text'),
 
-		$prev = document.getElementById('b-navkey__prev'),
-		$next = document.getElementById('b-navkey__next'),
+		$prev			= document.getElementById('b-navkey__prev'),
+		$next			= document.getElementById('b-navkey__next'),
 
-		textArray = ['You can...', '... add some text ...', '... which depends of ...', '... slide ...', 'Oliw Page Slider'],
-		hrefArray = 'layout';
+		textArray		= ['You can...', '... add some text ...', '... which depends of ...', '... slide ...', 'Oliw Page Slider'],
+		hrefArray		= 'layout';
 
 
 	if (hrefArray == 'layout') { // add hashes from nav
@@ -264,7 +264,7 @@ function pageslider(item, callback) {
 
 		setTimeout(function() { //weaknesses
 
-			if (textArray) {
+			if (textArray && $textBlock) {
 				$textBlock.innerHTML = textArray[pageActive];
 			}
 
