@@ -193,17 +193,14 @@ h2 {
 		}
 
 	.b-progress {
-		width: 950px;
+		width: 100%;
 
 		position: absolute;
 		top: 50%;
-		left: 50%;
 		z-index: 999;
 
-		margin-left: -475px;
-
 		color: #fff;
-		font: 700 50px/1 Arial;
+		font: 700 5vw/1 Arial;
 
 		text-align: center;
 

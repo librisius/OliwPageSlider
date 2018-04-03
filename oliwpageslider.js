@@ -90,7 +90,6 @@ function pageslider(item, callback) {
 
 	// Touch
 	document.addEventListener('touchstart', function(event) {
-
 		touchStartPoint = event.changedTouches[0].clientY;
 		clientTopStart = Math.round($pageActive.children[0].getBoundingClientRect().top);
 
@@ -99,7 +98,6 @@ function pageslider(item, callback) {
 
 
 	document.addEventListener('touchmove', function(event) {
-
 		touchMovePoint = event.changedTouches[0].clientY;
 
 	}, false);
@@ -114,17 +112,28 @@ function pageslider(item, callback) {
 
 		$pageActive.style.transform = '';
 
-		if (yAbs > winH/4) {
+		// uncomment to add a limit at which scrolling to the next slide will not work
 
-			if (touchNowPoint.clientY < touchStartPoint) {
-				delta = 1;
-			}
-			else {
-				delta = -1;
-			}
+		// if (yAbs > winH/4) {
 
-			handle(delta, delayTime, false);
+		// 	if (touchNowPoint.clientY < touchStartPoint) {
+		// 		delta = 1;
+		// 		scrollSlides(delta);
+		// 	}
+		// 	else {
+		// 		delta = -1;
+		// 		scrollSlides(delta);
+		// 	}
 
+		// }
+
+		if (touchNowPoint.clientY < touchStartPoint) {
+			delta = 1;
+			scrollSlides(delta);
+		}
+		else {
+			delta = -1;
+			scrollSlides(delta);
 		}
 
 	}, false);
@@ -141,11 +150,11 @@ function pageslider(item, callback) {
 	}, false);
 
 	window.addEventListener('scrollDown', function(event) {
-		scrollslides(1);
+		scrollSlides(1);
 	});
 
 	window.addEventListener('scrollUp', function(event) {
-		scrollslides(-1);
+		scrollSlides(-1);
 	});
 
 	window.addEventListener('resize', function(event) {
@@ -154,7 +163,7 @@ function pageslider(item, callback) {
 
 
 
-	if ( $prev ) {
+	if ( $prev ) { // click on "prev" button
 
 		$prev.addEventListener('click', function(event) {
 			fnPrevNav();
@@ -165,7 +174,7 @@ function pageslider(item, callback) {
 		}, false);
 	}
 
-	if ( $next ) {
+	if ( $next ) { // click on "next" button
 
 		$next.addEventListener('click', function(event) {
 			fnNextNav();
@@ -176,7 +185,7 @@ function pageslider(item, callback) {
 		}, false);
 	}
 
-	if ( $toTop ) {
+	if ( $toTop ) { // click on "to top" button
 
 		$toTop.addEventListener('click', function(event) {
 			toTop();
@@ -189,7 +198,8 @@ function pageslider(item, callback) {
 
 
 
-	if ($navLi !== null) {
+	if ($navLi !== null) { // click on navigation item
+
 		for (var i = 0; i < $navLi.length; i++) {
 
 			$navLi[i].num = i;
@@ -207,12 +217,12 @@ function pageslider(item, callback) {
 		};
 	}
 
-	function scrollslides(direction) {
+	function scrollSlides(direction) {
 
 		var $children = $pageActive.children[0];
 
 		if ($children.clientHeight > winH) {
-			clientTopMove = Math.round($children.getBoundingClientRect().top),
+			clientTopMove = Math.round( $children.getBoundingClientRect().top ),
 			childrenBtPos = -( $children.clientHeight - winH);
 
 			if ( clientTopMove <= childrenBtPos && direction > 0) {
@@ -347,8 +357,8 @@ function pageslider(item, callback) {
 			delta = -1;
 
 			noActivePage = pageActive;
-			
-			handle(delta, delayTime);
+
+			scrollSlides(delta);
 
 		} else if ( keyCode == 83 || keyCode == 40 ) {
 			// 83 - is letter 'W'
@@ -357,7 +367,7 @@ function pageslider(item, callback) {
 
 			noActivePage = pageActive;
 
-			handle(delta, delayTime);
+			scrollSlides(delta);
 		}
 	}
 
