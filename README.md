@@ -1,4 +1,4 @@
-<a target="_blank" href="http://oliwlife.ru/works/libris/OliwPageSlider">Demo</a>
+<a target="_blank" href="http://oliwlife.ru/libris/OliwPageSlider">Demo</a>
 
 Можно использовать любую css анимацию
 Примеры интересных анимаиций http://tympanus.net/Development/PageTransitions/
